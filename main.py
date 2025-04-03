@@ -29,7 +29,7 @@ try:
     subprocess.run(["ffprobe", "-version"], check=True, capture_output=True, text=True, encoding='utf-8')
     #print("ffmpeg and ffprobe found.")
 except (FileNotFoundError, subprocess.CalledProcessError) as ffmpeg_err:
-    #print("=" * 40); print(f"FATAL ERROR: Could not find or run 'ffmpeg'/'ffprobe'.\n{ffmpeg_err}"); print("Please ensure ffmpeg is installed AND its location is in the system's PATH."); print("=" * 40); sys.exit(1)
+    print("=" * 40); print(f"FATAL ERROR: Could not find or run 'ffmpeg'/'ffprobe'.\n{ffmpeg_err}"); print("Please ensure ffmpeg is installed AND its location is in the system's PATH."); print("=" * 40); sys.exit(1)
 
 # --- טעינת מודל Whisper (אופציונלי) ---
 #print(f"Loading Whisper model (for potential future use): {MODEL_NAME}...")
@@ -38,7 +38,7 @@ try:
     whisper_model_object = whisper.load_model(MODEL_NAME)
     #print(f"Model '{MODEL_NAME}' loaded into memory successfully (though CLI will load its own).")
 except Exception as e:
-    #print(f"WARNING: Could not load Whisper model '{MODEL_NAME}' into memory (CLI will still be used).\n{e}")
+    print(f"WARNING: Could not load Whisper model '{MODEL_NAME}' into memory (CLI will still be used).\n{e}")
 
 # --- יצירת אפליקציית Flask ---
 app = Flask(__name__)
@@ -90,9 +90,7 @@ def handle_transcription_request():
         )
         thread.start()
         #print(f"DEBUG: Started background thread (subprocess method) for Job ID: {job_id}")
-
         return jsonify({"job_id": job_id}), 202
-
     except Exception as e:
         #print(f"ERROR during request submission for {original_filename or 'unknown file'}: {e}"); traceback.print_exc()
         # --- תיקון כאן ---
@@ -100,8 +98,8 @@ def handle_transcription_request():
             try:
                 os.remove(video_path)
                 #print(f"DEBUG: Cleaned up input file {video_path} after submission error.")
-            #except Exception as remove_err:
-                #print(f"ERROR: Could not remove input file {video_path} after submission error: {remove_err}")
+            except Exception as remove_err:
+                print(f"ERROR: Could not remove input file {video_path} after submission error: {remove_err}")
         # ------------------
         return jsonify({"error": f"Server error during request submission: {e}"}), 500
 

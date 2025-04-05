@@ -1,0 +1,4 @@
+openai-whisper
+Flask
+Flask-Cors
+requests

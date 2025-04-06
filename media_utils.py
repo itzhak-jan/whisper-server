@@ -3,9 +3,11 @@ import subprocess
 import os
 import sys
 import traceback # Added for better error printing
+from typing import Union
+
 
 # --- פונקציה: קבלת אורך מדיה עם ffprobe ---
-def get_media_duration(file_path: str) -> float | None:
+def get_media_duration(file_path: str) -> Union[float, None]:
     """
     Gets the duration of a media file in seconds using ffprobe.
     Returns None if duration cannot be determined or ffprobe fails.
